@@ -1,0 +1,19 @@
+{
+  "name": "ch06-express-practice101",
+  "version": "1.0.0",
+  "description": "nodejs-textbook-3rd-page243",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "keywords": [],
+  "author": "sando",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  }
+}
