@@ -12,6 +12,9 @@ import fs from "node:fs";
 dotenv.config();
 const app = express();
 
+import indexRouter from "./routes/index.js";
+import userRouter from "./routes/user.js";
+
 // 포트번호 세팅
 app.set("port", process.env.PORT || 3000);
 
@@ -32,52 +35,55 @@ app.use(express.urlencoded({ extended: true }));
 // 쿠키파서
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-try {
-  fs.readdirSync("uploads");
-} catch (err) {
-  console.error(err);
-  fs.mkdirSync("uploads");
-}
+// // 멀터
+// app.get("/mul", (req, res) => {
+//   res.sendFile(path.join(dirname, "/public/multipart_single.html"));
+// });
+
+// app.post("/mul", upload.single("image"), (req, res) => {
+//   console.log(req.file, req.body);
+//   res.send("ok");
+// });
+
+// 쿠키
+app.get("/setCookie", (req, res) => {
+  res
+    .cookie("name", "sando", {
+      maxAge: 600_000, // 1분
+      httpOnly: true,
+      signed: true,
+    })
+    .send("쿠키?");
+});
+app.get("/checkCookie", (req, res) => {
+  console.log(req.signedCookies);
+  res.send(req.signedCookies);
+});
+app.get("/deCookie", (req, res) => {
+  res.clearCookie("name", "sando", { httpOnly: true, signed: true });
+  // res.clearCookie(undefined, undefined, {});
+  res.send("완료?");
+});
 
 // 루트경로
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 app.get("/", (req, res) => {
-  // res.sendFile(path.join(dirname, "/index.html"));
   res.send("connect complete");
 });
 
-// 멀터
-app.get("/mul", (req, res) => {
-  res.sendFile(path.join(dirname, "/multipart_html/multipart_single.html"));
-});
+app.use("/", indexRouter);
+app.use("/user", userRouter);
 
-app.post("/mul", upload.single("image"), (req, res) => {
-  console.log(req.file, req.body);
-  res.send("ok");
+app.use((req, res, next) => {
+  // res.status(404).send("Not Found");
+  const error = new Error(`${req.method} ${req.url} 라우터 없음`);
+  error.status = 404;
+  next(error);
 });
-
-// 쿠키
-// app.get("/setCookie", (req, res) => {
-//   res
-//     .cookie("name", "sando", {
-//       maxAge: 600000, // 1분
-//       httpOnly: true,
-//       signed: true,
-//     })
-//     .send("쿠키?");
-// });
-// app.get("/checkCookie", (req, res) => {
-//   console.log(req.signedCookies);
-//   res.send(req.signedCookies);
-// });
-// app.get("/deCookie", (req, res) => {
-//   res.clearCookie("name", "sando", { httpOnly: true, signed: true });
-//   // res.clearCookie(undefined, undefined, {});
-//   res.send("완료?");
-// });
 
 app.use((err, req, res, next) => {
-  res.status(500).send(err.message);
+  // res.status(500).send(err.message);
+  res.status(err.status || 500).send(err.stack);
 });
 
 app.listen(app.get("port"), () => {
