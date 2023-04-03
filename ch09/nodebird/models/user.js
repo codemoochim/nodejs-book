@@ -1,5 +1,4 @@
 const Sequelize = require("sequelize");
-
 class User extends Sequelize.Model {
   static initiate(sequelize) {
     User.init(
@@ -35,7 +34,7 @@ class User extends Sequelize.Model {
         tableName: "users",
         paranoid: true,
         charset: "utf8",
-        collate: "utf8_general_ci,",
+        collate: "utf8_general_ci",
       }
     );
   }

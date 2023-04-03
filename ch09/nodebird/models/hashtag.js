@@ -12,7 +12,7 @@ class Hashtag extends Sequelize.Model {
       },
       {
         sequelize,
-        timestamps: false,
+        timestamps: true,
         underscored: false,
         modelName: "Hashtag",
         tableName: "hashtags",
@@ -22,8 +22,9 @@ class Hashtag extends Sequelize.Model {
       }
     );
   }
-  static associtate(db) {
-    db.HashTag.belongsToMany(db.Post, { through: "PostHashtag" });
+
+  static associate(db) {
+    db.Hashtag.belongsToMany(db.Post, { through: "PostHashtag" });
   }
 }
 

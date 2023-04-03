@@ -1,4 +1,5 @@
 const express = require("express");
+const { isLoggedIn, isNotLoggedIn } = require("../middleware");
 const {
   renderProfile,
   renderJoin,
@@ -7,16 +8,17 @@ const {
 
 const router = express.Router();
 
+// root단 엔드포인트
 router.use((req, res, next) => {
-  res.locals.user = null;
+  res.locals.user = req.user;
   res.locals.followerCount = 0;
   res.locals.followingCount = 0;
   res.locals.follwingIdList = [];
   next();
 });
 
-router.get("/profile", renderProfile);
-router.get("/join", renderJoin);
+router.get("/profile", isLoggedIn, renderProfile);
+router.get("/join", isNotLoggedIn, renderJoin);
 router.get("/", renderMain);
 
 module.exports = router;
