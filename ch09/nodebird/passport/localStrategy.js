@@ -13,11 +13,17 @@ module.exports = () => {
         passReqToCallback: false,
       },
       async (email, password, done) => {
+        console.log("1616번");
         try {
+          console.log(email);
+          console.log("LocalStrategy 2번");
           const exUser = await User.findOne({ where: { email } });
           if (exUser) {
             const result = await bcrypt.compare(password, exUser.password);
             if (result) {
+              console.log("1717번");
+              console.log("17번");
+              console.log(exUser);
               done(null, exUser);
             } else {
               done(null, false, { message: "비밀번호가 일치하지 않습니다." });

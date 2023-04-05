@@ -9,6 +9,8 @@ exports.isLoggedIn = (req, res, next) => {
 
 exports.isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
+    console.log(`${req.body.email}`);
+    console.log("isAuthenticated 1번");
     next();
   } else {
     const message = encodeURIComponent("이미 로그인한 상태입니다.");

@@ -14,7 +14,9 @@ const { sequelize } = require("./models"); // 시퀄라이즈 모델 연결학l 
 const passportConfig = require("./passport");
 
 const app = express();
+console.log("11번");
 passportConfig();
+console.log("22번");
 app.set("port", process.env.PORT || 8001);
 app.set("view engine", "html");
 nunjucks.configure("views", {
@@ -44,18 +46,21 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: false,
+      maxAge: 600000,
     },
   })
 );
-
+console.log("33번");
 app.use(passport.initialize()); // req객체에 passport 설정을 심음
+console.log("44번");
 app.use(passport.session()); // req.session객체에 passport 정보를 저장
+console.log("55번");
 
 app.use("/", pageRouter);
 app.use("/auth", authRouter);
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
-  err.status = 404;
+  error.status = 404;
   next(error);
 });
 

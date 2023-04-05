@@ -10,14 +10,14 @@ router.post("/join", isNotLoggedIn, join);
 
 router.post("/login", isNotLoggedIn, login);
 
-router.post("/logout", isLoggedIn, logout);
+router.get("/logout", isLoggedIn, logout);
 
 // GET /auth/kakao
 router.get("/kakao", passport.authenticate("kakao"));
 
 // GET /auth/kakao/callback
 router.get(
-  "kakao/callback",
+  "/kakao/callback",
   passport.authenticate("kakao", {
     failureRedirect: "/?loginError=카카오로그인 실패", // 실패 시
   }),
