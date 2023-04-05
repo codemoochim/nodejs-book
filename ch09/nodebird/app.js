@@ -10,13 +10,14 @@ const passport = require("passport");
 dotenv.config();
 const pageRouter = require("./routes/page");
 const authRouter = require("./routes/auth");
-const { sequelize } = require("./models"); // 시퀄라이즈 모델 연결학l dnlgo
+const postRouter = require("./routes/post");
+const userRouter = require("./routes/user");
+const { sequelize } = require("./models"); // 시퀄라이즈 모델 연결확인
 const passportConfig = require("./passport");
 
 const app = express();
-console.log("11번");
 passportConfig();
-console.log("22번");
+
 app.set("port", process.env.PORT || 8001);
 app.set("view engine", "html");
 nunjucks.configure("views", {
@@ -35,6 +36,7 @@ sequelize
 
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/img", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -50,14 +52,13 @@ app.use(
     },
   })
 );
-console.log("33번");
-app.use(passport.initialize()); // req객체에 passport 설정을 심음
-console.log("44번");
-app.use(passport.session()); // req.session객체에 passport 정보를 저장
-console.log("55번");
+app.use(passport.initialize()); // 요청객체에 passport 설정을 심는다
+app.use(passport.session()); // req.session 객체에 passport 정보를 저장한다.
 
 app.use("/", pageRouter);
 app.use("/auth", authRouter);
+app.use("/post", postRouter);
+app.use("/user", userRouter);
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
   error.status = 404;

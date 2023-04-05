@@ -1,3 +1,4 @@
+const e = require("express");
 const passport = require("passport");
 
 const kakaoStrategy = require("passport-kakao").Strategy;
@@ -11,31 +12,70 @@ module.exports = () => {
         clientID: process.env.KAKAO_ID,
         callbackURL: "/auth/kakao/callback",
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (asccessToken, refreshToken, profile, done) => {
         console.log("kakao profile", profile);
         try {
           const exUser = await User.findOne({
-            where: {
-              snsId: profile.id,
-              provider: "kakao",
-            },
+            where: { snsId: profile.id, provider: "kakao" },
           });
           if (exUser) {
             done(null, exUser);
           } else {
             const newUser = await User.create({
-              email: profile._josin?.kakao_account?.email,
+              email: profile._json?.kakao_account?.email,
               nick: profile.displayName,
               snsId: profile.id,
               provider: "kakao",
             });
             done(null, newUser);
           }
-        } catch (error) {
-          console.error(error);
-          done(error);
+        } catch (err) {
+          console.error(err);
+          done(err);
         }
       }
     )
   );
 };
+
+// const passport = require("passport");
+
+// const kakaoStrategy = require("passport-kakao").Strategy;
+
+// const User = require("../models/user");
+
+// module.exports = () => {
+//   passport.use(
+//     new kakaoStrategy(
+//       {
+//         clientID: process.env.KAKAO_ID,
+//         callbackURL: "/auth/kakao/callback",
+//       },
+//       async (accessToken, refreshToken, profile, done) => {
+//         console.log("kakao profile", profile);
+//         try {
+//           const exUser = await User.findOne({
+//             where: {
+//               snsId: profile.id,
+//               provider: "kakao",
+//             },
+//           });
+//           if (exUser) {
+//             done(null, exUser);
+//           } else {
+//             const newUser = await User.create({
+//               email: profile._josin?.kakao_account?.email,
+//               nick: profile.displayName,
+//               snsId: profile.id,
+//               provider: "kakao",
+//             });
+//             done(null, newUser);
+//           }
+//         } catch (error) {
+//           console.error(error);
+//           done(error);
+//         }
+//       }
+//     )
+//   );
+// };
